@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Simple Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- History Panel -->
+        <div class="history-panel">
+            <div class="history-header">
+                <h2>History</h2>
+                <button id="clear-history" class="icon-btn" title="Clear History">
+                    <span class="material-icons-round">delete_outline</span>
+                </button>
+            </div>
+            <div class="history-list" id="history-list">
+                <!-- History items will be injected here -->
+            </div>
+        </div>
+
+        <!-- Calculator Main Container -->
+        <div class="calculator-container">
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn theme-toggle" title="Toggle Theme">
+                    <span class="material-icons-round" id="theme-icon">light_mode</span>
+                </button>
+                <button id="history-toggle" class="icon-btn" title="Toggle History">
+                    <span class="material-icons-round">history</span>
+                </button>
+            </div>
+            
+            <div class="display">
+                <div class="display-history" id="display-history"></div>
+                <div class="display-current" id="display-current">0</div>
+            </div>
+
+            <div class="keypad scientific-grid">
+                <!-- Row 1 -->
+                <button class="btn btn-func style-dark" data-action="func" data-value="2nd">2nd</button>
+                <button class="btn btn-func style-dark" data-action="insert" data-value="PI">π</button>
+                <button class="btn btn-func style-dark" data-action="insert" data-value="E">e</button>
+                <button class="btn btn-action style-light text-red" data-action="clear">C</button>
+                <button class="btn btn-action style-light text-red" data-action="delete">⌫</button>
+                
+                <!-- Row 2 -->
+                <button class="btn btn-func style-dark" data-action="func" data-value="square">x²</button>
+                <button class="btn btn-func style-dark" data-action="func" data-value="reciprocal">¹/x</button>
+                <button class="btn btn-func style-dark" data-action="func" data-value="abs">|x|</button>
+                <button class="btn btn-func style-dark" data-action="func" data-value="exp">exp</button>
+                <button class="btn btn-operator style-light text-purple" data-action="operator" data-value="%">mod</button>
+                
+                <!-- Row 3 -->
+                <button class="btn btn-func style-dark" data-action="func" data-value="sqrt">²√x</button>
+                <button class="btn btn-func style-dark text-purple" data-action="insert" data-value="(">(</button>
+                <button class="btn btn-func style-dark text-purple" data-action="insert" data-value=")">)</button>
+                <button class="btn btn-func style-dark" data-action="func" data-value="factorial">n!</button>
+                <button class="btn btn-operator style-light text-purple" data-action="operator" data-value="/">÷</button>
+                
+                <!-- Row 4 -->
+                <button class="btn btn-operator style-dark text-purple" data-action="operator" data-value="**">xʸ</button>
+                <button class="btn btn-number style-light" data-value="7">7</button>
+                <button class="btn btn-number style-light" data-value="8">8</button>
+                <button class="btn btn-number style-light" data-value="9">9</button>
+                <button class="btn btn-operator style-light text-purple" data-action="operator" data-value="*">×</button>
+                
+                <!-- Row 5 -->
+                <button class="btn btn-func style-dark" data-action="func" data-value="ten_power">10ˣ</button>
+                <button class="btn btn-number style-light" data-value="4">4</button>
+                <button class="btn btn-number style-light" data-value="5">5</button>
+                <button class="btn btn-number style-light" data-value="6">6</button>
+                <button class="btn btn-operator style-light text-purple" data-action="operator" data-value="-">−</button>
+                
+                <!-- Row 6 -->
+                <button class="btn btn-func style-dark" data-action="func" data-value="log">log</button>
+                <button class="btn btn-number style-light" data-value="1">1</button>
+                <button class="btn btn-number style-light" data-value="2">2</button>
+                <button class="btn btn-number style-light" data-value="3">3</button>
+                <button class="btn btn-operator style-light text-purple" data-action="operator" data-value="+">+</button>
+                
+                <!-- Row 7 -->
+                <button class="btn btn-func style-dark" data-action="func" data-value="ln">ln</button>
+                <button class="btn btn-func style-dark" data-action="func" data-value="toggle_sign">+/-</button>
+                <button class="btn btn-number style-light" data-value="0">0</button>
+                <button class="btn btn-number style-light" data-value=".">.</button>
+                <button class="btn btn-equals" data-action="calculate">=</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
