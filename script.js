@@ -49,6 +49,44 @@ const historyPanel = document.querySelector('.history-panel');
 const historyToggleBtn = document.getElementById('history-toggle');
 const buttons = document.querySelectorAll('.btn');
 
+// --- Sidebar & Converter Elements ---
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+const menuToggleBtn = document.getElementById('menu-toggle');
+const sidebarCloseBtn = document.getElementById('sidebar-close');
+const menuItems = document.querySelectorAll('.menu-item');
+
+const currentModeTitle = document.getElementById('current-mode-title');
+const calcDisplay = document.getElementById('calc-display');
+const convDisplay = document.getElementById('conv-display');
+const keypad = document.querySelector('.keypad');
+
+const convFromUnit = document.getElementById('conv-from-unit');
+const convToUnit = document.getElementById('conv-to-unit');
+const convFromValue = document.getElementById('conv-from-value');
+const convToValue = document.getElementById('conv-to-value');
+const convRateDisplay = document.getElementById('conv-rate-display');
+const convFromSection = document.getElementById('conv-from-section');
+const convToSection = document.getElementById('conv-to-section');
+
+// --- Converter State ---
+let currentMode = 'scientific'; // scientific, currency, time, length, weight
+let activeConvSection = 'from';
+let exchangeRates = {};
+
+const units = {
+    currency: ['USD', 'EUR', 'GBP', 'INR', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'NZD'],
+    time: ['Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Years'],
+    length: ['Millimeters', 'Centimeters', 'Meters', 'Kilometers', 'Inches', 'Feet', 'Yards', 'Miles'],
+    weight: ['Milligrams', 'Grams', 'Kilograms', 'Ounces', 'Pounds']
+};
+
+const conversionFactors = {
+    time: { 'Seconds': 1, 'Minutes': 60, 'Hours': 3600, 'Days': 86400, 'Weeks': 604800, 'Years': 31536000 },
+    length: { 'Meters': 1, 'Kilometers': 1000, 'Centimeters': 0.01, 'Millimeters': 0.001, 'Miles': 1609.344, 'Yards': 0.9144, 'Feet': 0.3048, 'Inches': 0.0254 },
+    weight: { 'Grams': 1, 'Kilograms': 1000, 'Milligrams': 0.001, 'Pounds': 453.59237, 'Ounces': 28.34952 }
+};
+
 // --- Core Calculator Logic ---
 
 function updateDisplay() {
@@ -72,7 +110,8 @@ function clear() {
     previousInput = '';
     currentOperator = null;
     shouldResetScreen = false;
-    updateDisplay();
+    if (currentMode === 'scientific') updateDisplay();
+    else updateConverter();
 }
 
 function deleteNumber() {
@@ -81,7 +120,8 @@ function deleteNumber() {
     } else {
         currentInput = currentInput.slice(0, -1);
     }
-    updateDisplay();
+    if (currentMode === 'scientific') updateDisplay();
+    else updateConverter();
 }
 
 function appendNumber(number) {
@@ -95,10 +135,12 @@ function appendNumber(number) {
         if (number === '.' && currentInput.includes('.')) return;
         currentInput += number;
     }
-    updateDisplay();
+    if (currentMode === 'scientific') updateDisplay();
+    else updateConverter();
 }
 
 function setOperator(operator) {
+    if (currentMode !== 'scientific') return;
     if (currentOperator !== null) {
         evaluate();
     }
@@ -222,6 +264,164 @@ function insertValue(val) {
     }
     shouldResetScreen = true;
     updateDisplay();
+}
+
+// --- Converter Logic ---
+
+function updateConverter() {
+    if (currentMode === 'scientific') return;
+    
+    const val = parseFloat(currentInput);
+    const fromU = convFromUnit.value;
+    const toU = convToUnit.value;
+    
+    if (isNaN(val)) {
+        convFromValue.textContent = '0';
+        convToValue.textContent = '0';
+        return;
+    }
+    
+    let result = 0;
+    
+    if (currentMode === 'currency') {
+        if (exchangeRates[fromU] && exchangeRates[toU]) {
+            const valInUSD = val / exchangeRates[fromU];
+            result = valInUSD * exchangeRates[toU];
+        }
+    } else {
+        const factors = conversionFactors[currentMode];
+        if (factors && factors[fromU] && factors[toU]) {
+            const baseVal = val * factors[fromU];
+            result = baseVal / factors[toU];
+        }
+    }
+    
+    // Fix precision
+    result = Math.round(result * 1000000) / 1000000;
+    
+    if (activeConvSection === 'from') {
+        convFromValue.textContent = currentInput;
+        convToValue.textContent = result.toString();
+    } else {
+        let invResult = 0;
+        if (currentMode === 'currency') {
+            if (exchangeRates[fromU] && exchangeRates[toU]) {
+                const valInUSD = val / exchangeRates[toU];
+                invResult = valInUSD * exchangeRates[fromU];
+            }
+        } else {
+            const factors = conversionFactors[currentMode];
+            if (factors && factors[fromU] && factors[toU]) {
+                const baseVal = val * factors[toU];
+                invResult = baseVal / factors[fromU];
+            }
+        }
+        invResult = Math.round(invResult * 1000000) / 1000000;
+        
+        convToValue.textContent = currentInput;
+        convFromValue.textContent = invResult.toString();
+    }
+}
+
+convFromUnit.addEventListener('change', updateConverter);
+convToUnit.addEventListener('change', updateConverter);
+
+convFromSection.addEventListener('click', () => {
+    activeConvSection = 'from';
+    convFromSection.classList.add('active');
+    convToSection.classList.remove('active');
+    currentInput = convFromValue.textContent;
+});
+
+convToSection.addEventListener('click', () => {
+    activeConvSection = 'to';
+    convToSection.classList.add('active');
+    convFromSection.classList.remove('active');
+    currentInput = convToValue.textContent;
+});
+
+// --- Sidebar Logic ---
+
+function openSidebar() {
+    sidebar.classList.add('show');
+    sidebarOverlay.classList.add('show');
+}
+function closeSidebar() {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+}
+
+menuToggleBtn.addEventListener('click', openSidebar);
+sidebarCloseBtn.addEventListener('click', closeSidebar);
+sidebarOverlay.addEventListener('click', closeSidebar);
+
+menuItems.forEach(item => {
+    item.addEventListener('click', () => {
+        const mode = item.getAttribute('data-mode');
+        setMode(mode);
+        
+        menuItems.forEach(m => m.classList.remove('active'));
+        item.classList.add('active');
+        closeSidebar();
+    });
+});
+
+async function setMode(mode) {
+    currentMode = mode;
+    currentModeTitle.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+    
+    if (mode === 'scientific') {
+        calcDisplay.style.display = 'flex';
+        convDisplay.style.display = 'none';
+        keypad.classList.remove('converter-grid');
+        keypad.classList.add('scientific-grid');
+        clear();
+    } else {
+        calcDisplay.style.display = 'none';
+        convDisplay.style.display = 'flex';
+        keypad.classList.remove('scientific-grid');
+        keypad.classList.add('converter-grid');
+        
+        if (mode === 'currency' && Object.keys(exchangeRates).length === 0) {
+            convRateDisplay.textContent = 'Loading rates...';
+            try {
+                const res = await fetch('https://open.er-api.com/v6/latest/USD');
+                const data = await res.json();
+                exchangeRates = data.rates;
+                convRateDisplay.textContent = 'Rates updated successfully.';
+            } catch (err) {
+                convRateDisplay.textContent = 'Failed to load rates.';
+            }
+        } else {
+            convRateDisplay.textContent = '';
+        }
+        
+        populateUnits(mode);
+        activeConvSection = 'from';
+        convFromSection.classList.add('active');
+        convToSection.classList.remove('active');
+        clear();
+    }
+}
+
+function populateUnits(mode) {
+    convFromUnit.innerHTML = '';
+    convToUnit.innerHTML = '';
+    
+    units[mode].forEach(u => {
+        const opt1 = document.createElement('option');
+        opt1.value = u; opt1.textContent = u;
+        const opt2 = document.createElement('option');
+        opt2.value = u; opt2.textContent = u;
+        
+        convFromUnit.appendChild(opt1);
+        convToUnit.appendChild(opt2);
+    });
+    
+    if (units[mode].length > 1) {
+        convToUnit.selectedIndex = 1;
+    }
+    updateConverter();
 }
 
 // --- History Logic ---

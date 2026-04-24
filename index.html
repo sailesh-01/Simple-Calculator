@@ -9,6 +9,36 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
 <body>
+    <!-- Sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <button id="sidebar-close" class="icon-btn" title="Close Menu">
+            <span class="material-icons-round">close</span>
+        </button>
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-mode="scientific">
+                <span class="material-icons-round">calculate</span>
+                <span>Scientific</span>
+            </div>
+            <div class="menu-item" data-mode="currency">
+                <span class="material-icons-round">attach_money</span>
+                <span>Currency</span>
+            </div>
+            <div class="menu-item" data-mode="time">
+                <span class="material-icons-round">schedule</span>
+                <span>Time</span>
+            </div>
+            <div class="menu-item" data-mode="length">
+                <span class="material-icons-round">straighten</span>
+                <span>Length</span>
+            </div>
+            <div class="menu-item" data-mode="weight">
+                <span class="material-icons-round">scale</span>
+                <span>Weight</span>
+            </div>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- History Panel -->
         <div class="history-panel">
@@ -26,17 +56,38 @@
         <!-- Calculator Main Container -->
         <div class="calculator-container">
             <div class="header-actions">
-                <button id="theme-toggle" class="icon-btn theme-toggle" title="Toggle Theme">
-                    <span class="material-icons-round" id="theme-icon">light_mode</span>
-                </button>
-                <button id="history-toggle" class="icon-btn" title="Toggle History">
-                    <span class="material-icons-round">history</span>
-                </button>
+                <div class="left-actions">
+                    <button id="menu-toggle" class="icon-btn" title="Open Menu">
+                        <span class="material-icons-round">menu</span>
+                    </button>
+                    <span id="current-mode-title" class="mode-title">Scientific</span>
+                </div>
+                <div class="right-actions">
+                    <button id="theme-toggle" class="icon-btn theme-toggle" title="Toggle Theme">
+                        <span class="material-icons-round" id="theme-icon">light_mode</span>
+                    </button>
+                    <button id="history-toggle" class="icon-btn" title="Toggle History">
+                        <span class="material-icons-round">history</span>
+                    </button>
+                </div>
             </div>
             
-            <div class="display">
+            <div class="display" id="calc-display">
                 <div class="display-history" id="display-history"></div>
                 <div class="display-current" id="display-current">0</div>
+            </div>
+
+            <!-- Converter Display -->
+            <div class="converter-display" id="conv-display" style="display: none;">
+                <div class="conv-section active" id="conv-from-section">
+                    <select id="conv-from-unit" class="conv-select"></select>
+                    <div class="conv-value" id="conv-from-value">0</div>
+                </div>
+                <div class="conv-section" id="conv-to-section">
+                    <select id="conv-to-unit" class="conv-select"></select>
+                    <div class="conv-value" id="conv-to-value">0</div>
+                </div>
+                <div class="conv-rate" id="conv-rate-display"></div>
             </div>
 
             <div class="keypad scientific-grid">

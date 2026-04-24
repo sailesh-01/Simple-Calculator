@@ -227,6 +227,16 @@ body {
     justify-content: space-between;
     z-index: 10;
 }
+.left-actions, .right-actions {
+    display: flex;
+    align-items: center;
+}
+.mode-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-left: 8px;
+    color: var(--text-primary);
+}
 
 .display {
     padding: 30px 10px 20px;
@@ -238,6 +248,55 @@ body {
     justify-content: flex-end;
     word-wrap: break-word;
     word-break: break-all;
+}
+
+.converter-display {
+    padding: 30px 10px 20px;
+    margin-bottom: 20px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+.conv-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.conv-select {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.conv-select option {
+    background: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.conv-value {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-height: 48px;
+}
+
+.conv-section.active .conv-value {
+    color: var(--text-primary);
+}
+
+.conv-rate {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
 }
 
 .display-history {
@@ -279,6 +338,46 @@ body {
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
 }
+
+.keypad.converter-grid {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 60px);
+    gap: 16px;
+}
+
+.keypad.converter-grid .btn-func,
+.keypad.converter-grid .btn-operator,
+.keypad.converter-grid .btn-equals,
+.keypad.converter-grid .btn-insert {
+    display: none;
+}
+
+/* Explicitly place the visible buttons for converter mode */
+.keypad.converter-grid .btn {
+    height: 100%; /* Stretch to fill 60px row */
+}
+
+.keypad.converter-grid .btn[data-action="clear"] { grid-column: 1; grid-row: 1; display: flex; }
+.keypad.converter-grid .btn[data-action="delete"] { grid-column: 3; grid-row: 1; display: flex; }
+
+.keypad.converter-grid .btn[data-value="7"] { grid-column: 1; grid-row: 2; }
+.keypad.converter-grid .btn[data-value="8"] { grid-column: 2; grid-row: 2; }
+.keypad.converter-grid .btn[data-value="9"] { grid-column: 3; grid-row: 2; }
+
+.keypad.converter-grid .btn[data-value="4"] { grid-column: 1; grid-row: 3; }
+.keypad.converter-grid .btn[data-value="5"] { grid-column: 2; grid-row: 3; }
+.keypad.converter-grid .btn[data-value="6"] { grid-column: 3; grid-row: 3; }
+
+.keypad.converter-grid .btn[data-value="1"] { grid-column: 1; grid-row: 4; }
+.keypad.converter-grid .btn[data-value="2"] { grid-column: 2; grid-row: 4; }
+.keypad.converter-grid .btn[data-value="3"] { grid-column: 3; grid-row: 4; }
+
+.keypad.converter-grid .btn[data-value="toggle_sign"] { grid-column: 1; grid-row: 5; display: flex; }
+.keypad.converter-grid .btn[data-value="0"] { grid-column: 2; grid-row: 5; }
+.keypad.converter-grid .btn[data-value="."] { grid-column: 3; grid-row: 5; }
 
 .btn {
     border: none;
@@ -359,6 +458,71 @@ body {
 .btn-equals:active, .btn-equals.pressed {
     background: var(--accent-primary);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Styles */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.sidebar-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100vh;
+    background: var(--bg-panel);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+.sidebar.show {
+    left: 0;
+}
+
+.sidebar-menu {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.menu-item:hover {
+    background: var(--btn-dark-hover);
+}
+.menu-item.active {
+    background: var(--btn-light-bg);
+    color: var(--text-purple);
 }
 
 /* Responsive adjustments */
